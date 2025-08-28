@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import com.nilhcem.fakesmtp.model.UIModel;
 import com.nilhcem.fakesmtp.server.MailSaver;
 
-import com.apple.eawt.Application;
+import java.awt.Taskbar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,11 +75,11 @@ public final class NbReceivedLabel implements Observer {
 
 	private void updateDockIconBadge(String badgeValue) {
 		try {
-			Application.getApplication().setDockIconBadge(badgeValue);
-		} catch (RuntimeException e) {
-			LOGGER.debug("Error: {} - This is probably because we run on a non-Mac platform and these components are not implemented", e.getMessage());
+			if (Taskbar.isTaskbarSupported() && Taskbar.getTaskbar().isSupported(Taskbar.Feature.ICON_BADGE_TEXT)) {
+				Taskbar.getTaskbar().setIconBadge(badgeValue);
+			}
 		} catch (Exception e) {
-			LOGGER.error("", e);
+			LOGGER.debug("Could not set taskbar badge: {}", e.getMessage());
 		}
 	}
 }

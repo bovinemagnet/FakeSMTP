@@ -17,10 +17,20 @@ source code is provided.
 It is licensed under the very free BSD or GPL license, whichever you prefer.
 
 
+## Latest Updates
+
+- **Java 21 Support**: The application has been updated to use Java 21 with modernized dependencies
+- **Cross-platform Compatibility**: Replaced deprecated Apple Java Extensions with standard Java APIs  
+- **Updated Dependencies**: All major dependencies have been updated to their latest stable versions
+- **Documentation**: 
+  - [Quick Start Guide](QUICK_START.md) - Get up and running quickly
+  - [Migration Guide](MIGRATION_JAVA21.md) - Detailed Java 21 upgrade information
+
+
 Requirements
 ------------
 
-You need Java JVM 1.6 or newer installed on your machine.
+You need Java JVM 21 or newer installed on your machine.
 
 If you are on a "Unix-like" machine (Mac, GNU/Linux, BSD...), you may have
 to be "root" to start the port `25`, otherwise, try another port >= `1024`.
@@ -82,19 +92,26 @@ Listed below are some greats alternatives to Fake SMTP:
 * Cross-Platform (written in Java 1.4).
 
 
-Building it
------------
+Building from Source
+--------------------
 
-You need to download and setup Maven.
-Once installed, go to project directory and run the following command:
+### Prerequisites
+- Java JDK 21 or higher
+- Maven 3.6+ (or use the included Maven Wrapper)
 
-    mvn package -Dmaven.test.skip
+### Build Commands
 
-This command will create an executable jar on the target folder.
+Using the Maven Wrapper (recommended):
 
-We recommend you not to skip unit tests.
+    ./mvnw clean package              # Build with tests
+    ./mvnw clean package -DskipTests  # Build without tests
 
-Once you know how to configure unit tests for this project, stop skipping them.
+Or with Maven directly:
+
+    mvn clean package                  # Build with tests
+    mvn clean package -DskipTests      # Build without tests
+
+The executable JAR will be created in the `target/` folder as `fakeSMTP-VERSION.jar`.
 
 
 Running integration tests
@@ -110,13 +127,33 @@ You can then run the following command:
     mvn integration-test
 
 
-Change the default port for unit/integration tests
---------------------------------------------------
+Testing Configuration
+--------------------
 
-You need to modify the following file:
-`src/test/java/com/nilhcem/fakesmtp/core/test/TestConfig.java`.
+### Change the default port for unit/integration tests
 
-Please note that it is better to have two different ports for unit and integrations tests, to avoid any port binding exception while running Maven's `integration-test` goal.
+Modify the test configuration in:
+`src/test/java/com/nilhcem/fakesmtp/core/test/TestConfig.java`
+
+- Unit tests default port: 2626
+- Integration tests default port: 2525
+
+Using different ports for unit and integration tests prevents port binding conflicts when running Maven's `integration-test` goal.
+
+
+## Technical Details
+
+### Minimum Requirements
+- Java 21 or higher
+- 128MB RAM
+- Any operating system with Java support (Windows, macOS, Linux, BSD)
+
+### Key Dependencies
+- SubEthaSMTP 3.1.7 - SMTP server implementation
+- MigLayout 11.3 - Swing layout manager
+- SLF4J 2.0.9 + Logback 1.4.14 - Logging framework
+- Commons IO 2.15.1 - File operations
+- Commons CLI 1.6.0 - Command-line parsing
 
 
 Usage on Docker

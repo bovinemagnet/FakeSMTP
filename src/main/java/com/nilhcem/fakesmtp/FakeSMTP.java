@@ -12,7 +12,9 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apple.eawt.Application;
+import java.awt.Desktop;
+import java.awt.Image;
+import java.awt.Taskbar;
 import com.nilhcem.fakesmtp.core.ArgsHandler;
 import com.nilhcem.fakesmtp.core.Configuration;
 import com.nilhcem.fakesmtp.core.exception.UncaughtExceptionHandler;
@@ -74,15 +76,17 @@ public final class FakeSMTP {
             EventQueue.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					// Set dock/taskbar icon using modern Java API
 					try {
-						URL envelopeImage = getClass().getResource(Configuration.INSTANCE.get("application.icon.path"));
-						if (envelopeImage != null) {
-							Application.getApplication().setDockIconImage(Toolkit.getDefaultToolkit().getImage(envelopeImage));
+						if (Taskbar.isTaskbarSupported() && Taskbar.getTaskbar().isSupported(Taskbar.Feature.ICON_IMAGE)) {
+							URL envelopeImage = getClass().getResource(Configuration.INSTANCE.get("application.icon.path"));
+							if (envelopeImage != null) {
+								Image image = Toolkit.getDefaultToolkit().getImage(envelopeImage);
+								Taskbar.getTaskbar().setIconImage(image);
+							}
 						}
-					} catch (RuntimeException e) {
-						LOGGER.debug("Error: {} - This is probably because we run on a non-Mac platform and these components are not implemented", e.getMessage());
 					} catch (Exception e) {
-						LOGGER.error("", e);
+						LOGGER.debug("Could not set taskbar icon: {}", e.getMessage());
 					}
 
 					System.setProperty("apple.laf.useScreenMenuBar", "true");
